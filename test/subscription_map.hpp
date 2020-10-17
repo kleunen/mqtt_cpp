@@ -13,8 +13,6 @@
 #include <boost/functional/hash.hpp>
 #include "topic_filter_tokenizer.hpp"
 
-#include <sstream>
-
 /**
  *
  * In MQTT we have:
@@ -148,7 +146,7 @@ protected:
                         parent->second.count |= path_entry::has_hash_child_flag;
                     }
 
-                    if (next_node_id == std::numeric_limits<decltype(next_node_id)>::max()) {
+                    if (next_node_id == std::numeric_limits<node_id_t>::max()) {
                         throw std::overflow_error("Maximum number of subscriptions reached");
                     }
 
@@ -386,7 +384,7 @@ public:
     void find(MQTT_NS::string_view topic, Output callback) const {
         this->find_match(
             topic,
-            [&callback]( boost::optional<Value> value ) {
+            [&callback]( boost::optional<Value> const &value ) {
                 if(value) {
                     callback(value.get());
                 }
@@ -415,10 +413,11 @@ public:
             new_subscription_path.back()->second.value.insert(std::forward<V>(value));
             return std::make_pair(this->path_to_handle(new_subscription_path), true);
         } else {
+            auto handle = this->path_to_handle(path);
             auto result = path.back()->second.value.insert(std::forward<V>(value));
             if(result.second)
-                this->create_subscription(subscription);
-            return std::make_pair(this->path_to_handle(path), result.second);
+                this->increase_subscriptions(handle);
+            return std::make_pair(handle, result.second);
         }
     }
 
@@ -495,12 +494,13 @@ public:
         );
     }
 
-    void dump(std::ostream &out) {
+    template<typename Output>
+    void dump(Output &out) {
         for (auto const& i: this->get_map()) {
             out << i.first.first << " " << i.first.second << " " << i.second.value.size() << " " << i.second.count << std::endl;
         }
     }
-private:
+
 };
 
 #endif // MQTT_SUBSCRIPTION_MAP_HPP
