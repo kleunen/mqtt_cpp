@@ -888,12 +888,14 @@ private:
                                     );
                                 }
 
-                                session.con->publish(
+                                // After publish message becomes an inflight message ?
+                                // so we don't need to track the message anymore
+                                session.con->async_publish(
                                     MQTT_NS::force_move(i.topic),
                                     MQTT_NS::force_move(i.contents),
                                     MQTT_NS::force_move(i.pubopts),
-                                    MQTT_NS::force_move(props)
-                                );
+                                    MQTT_NS::force_move(props));
+
                             }
                         );
                         seq_idx.pop_front();
@@ -1441,7 +1443,7 @@ private:
                         )
                     );
                 }
-                ep.publish(
+                ep.async_publish(
                     r.topic,
                     r.contents,
                     std::min(r.qos_value, qos_value) | MQTT_NS::retain::yes,
@@ -1930,13 +1932,7 @@ private:
             MQTT_NS::v5::properties props) {
 
             if (online()) {
-                // TODO: Probably this should be switched to async_publish?
-
-                //       Given the async_client / sync_client seperation
-                //       and the way they have different function names,
-                //       it wouldn't be possible for test_broker.hpp to be
-                //       used with some hypothetical "async_server" in the future.
-                con->publish(
+                con->async_publish(
                     MQTT_NS::force_move(pub_topic),
                     MQTT_NS::force_move(contents),
                     pubopts,

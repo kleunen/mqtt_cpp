@@ -183,8 +183,8 @@ BOOST_AUTO_TEST_CASE( pub_qos1_sub_qos0 ) {
         // subscribe topic1 QoS0
         cont("h_suback"),
         // publish topic1 QoS1
+        cont("h_puback"),   // Assumption is made on order of puback/publish, i don't think this is correct
         cont("h_publish"),
-        cont("h_puback"),
         cont("h_unsuback"),
         // disconnect
         cont("h_close"),
@@ -309,8 +309,8 @@ BOOST_AUTO_TEST_CASE( pub_qos2_sub_qos0 ) {
         // subscribe topic1 QoS0
         cont("h_suback"),
         // publish topic1 QoS2
-        cont("h_publish"),
         cont("h_pubrec"),
+        cont("h_publish"),
         cont("h_pubcomp"),
         cont("h_unsuback"),
         // disconnect
@@ -560,9 +560,9 @@ BOOST_AUTO_TEST_CASE( pub_qos1_sub_qos1 ) {
         // subscribe topic1 QoS0
         cont("h_suback"),
         // publish topic1 QoS1
+        cont("h_puback"),
         cont("h_publish"),
         cont("h_pub_res_sent"),
-        cont("h_puback"),
         cont("h_unsuback"),
         // disconnect
         cont("h_close"),
@@ -695,9 +695,9 @@ BOOST_AUTO_TEST_CASE( pub_qos2_sub_qos1 ) {
         // subscribe topic1 QoS0
         cont("h_suback"),
         // publish topic1 QoS2
+        cont("h_pubrec"),
         cont("h_publish"),
         cont("h_pub_res_sent"),
-        cont("h_pubrec"),
         cont("h_pubcomp"),
         cont("h_unsuback"),
         // disconnect
