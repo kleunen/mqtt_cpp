@@ -126,7 +126,7 @@ IF (MQTT_USE_LOG)
     FIND_PACKAGE (Boost 1.67.0 REQUIRED COMPONENTS system date_time log filesystem thread program_options)
 ELSE ()
     MESSAGE (STATUS "Logging disabled")
-    FIND_PACKAGE (Boost 1.67.0 REQUIRED COMPONENTS system date_time)
+    FIND_PACKAGE (Boost 1.67.0 REQUIRED COMPONENTS system date_time program_options)
 ENDIF ()
 
 IF (MQTT_USE_TLS)
