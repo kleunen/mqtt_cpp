@@ -91,7 +91,7 @@ jobs:
       run: |
         call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         set path=%path%;"C:\Program Files\NASM"
-        cd ${{ runner.temp }}\openssl\openssl-1.1.1i && perl Configure -no-zlib no-dso no-comp no-shared no-tests -GL -LTCG VC-WIN64A
+        cd ${{ runner.temp }}\openssl\openssl-1.1.1i && perl Configure -no-zlib no-dso no-comp no-shared no-tests no-capieng -GL -LTCG VC-WIN64A
         cd ${{ runner.temp }}\openssl\openssl-1.1.1i && nmake        
     - name: Install Dependencies
       run: |

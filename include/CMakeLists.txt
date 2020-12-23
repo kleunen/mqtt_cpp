@@ -13,11 +13,7 @@ IF(MQTT_USE_STATIC_OPENSSL)
     # requires at least two more libs to be linked. "dl" is for dynamic library linking
     # and zlib is for basic compression functionality.
     # There is currently no way to specify statically linked zlib.
-    IF (MSVC)
-    SET(CRYPT32 crypt32.lib)
-    ENDIF()
-
-    TARGET_LINK_LIBRARIES(${PROJECT_NAME} INTERFACE $<$<BOOL:${MQTT_USE_TLS}>:${CMAKE_DL_LIBS}> $<$<BOOL:${MQTT_USE_ZLIB}>: ZLIB::ZLIB> ${CRYPT32})
+    TARGET_LINK_LIBRARIES(${PROJECT_NAME} INTERFACE $<$<BOOL:${MQTT_USE_TLS}>:${CMAKE_DL_LIBS}> $<$<BOOL:${MQTT_USE_ZLIB}>: ZLIB::ZLIB>)
 ENDIF()
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} INTERFACE $<$<BOOL:${MQTT_USE_TLS}>:OpenSSL::SSL>)

@@ -24,14 +24,6 @@ OPTION(MQTT_STD_ANY "Use std::any from C++17 instead of boost::any" OFF)
 OPTION(MQTT_STD_SHARED_PTR_ARRAY "Use std::shared_ptr<char[]> from C++17 instead of boost::shared_ptr<char[]>" OFF)
 OPTION(MQTT_DISABLE_LIBSTDCXX_TUPLE_ANY_WORKAROUND "std::tuple<std::any> workaround for libstdc++" OFF)
 
-if(MSVC)
-    add_compile_options(
-        $<$<CONFIG:>:/MT> #---------|
-        $<$<CONFIG:Debug>:/MTd> #---|-- Statically link the runtime libraries
-        $<$<CONFIG:Release>:/MT> #--|
-    )
-endif()
-
 IF (POLICY CMP0074)
   CMAKE_POLICY(SET CMP0074 NEW)
 ENDIF ()
@@ -114,6 +106,15 @@ ENDIF ()
 IF (MQTT_USE_STATIC_BOOST)
     MESSAGE (STATUS "Staticly linking with Boost")
     SET (Boost_USE_STATIC_LIBS TRUE)
+
+    IF (MSVC)
+        add_compile_options(
+            $<$<CONFIG:>:/MT> #---------|
+            $<$<CONFIG:Debug>:/MTd> #---|-- Statically link the runtime libraries
+            $<$<CONFIG:Release>:/MT> #--|
+        )
+        SET (Boost_USE_STATIC_RUNTIME TRUE)
+    ENDIF ()
 ELSE ()
     MESSAGE (STATUS "Dynamically linking with Boost")
     SET (Boost_USE_STATIC_LIBS FALSE)
