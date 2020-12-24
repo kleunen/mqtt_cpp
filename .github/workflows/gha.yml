@@ -30,7 +30,7 @@ jobs:
       env:
         OPENSSL_ROOT_DIR: /usr/local/opt/openssl
       run: |
-        cmake -S ${{ github.workspace }} -B ${{ runner.temp }} ${{ matrix.pattern }} -DCMAKE_CXX_COMPILER=clang++
+        cmake -S ${{ github.workspace }} -B ${{ runner.temp }} ${{ matrix.pattern }} -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=MinSizeRel
     - name: Check Header Dependencies
       run: |
         cmake --build ${{ runner.temp }} --parallel $(sysctl -n hw.ncpu) --clean-first --target check_deps
@@ -62,17 +62,17 @@ jobs:
         choco install --confirm --limitoutput --no-progress openssl
     - name: Configure      
       run: |
-        $env:CXXFLAGS="/D_WIN32_WINNT#0x0601 /DBOOST_THREAD_VERSION#3 /DBOOST_ALLOW_DEPRECATED_HEADERS /DBOOST_ASIO_NO_DEPRECATED"
+        $env:CXXFLAGS="/DEBUG:fastlink /D_WIN32_WINNT#0x0601 /DBOOST_THREAD_VERSION#3 /DBOOST_ALLOW_DEPRECATED_HEADERS /DBOOST_ASIO_NO_DEPRECATED"
         $env:BOOST_ROOT=$env:BOOST_ROOT_1_72_0
         cmake -A x64 -S ${{ github.workspace }} -B ${{ runner.temp }} ${{ matrix.pattern }}
     - name: Compile
       run: |
-        cmake --build ${{ runner.temp }} --parallel 1  --config Debug --clean-first
+        cmake --build ${{ runner.temp }} --parallel 1  --config MinSizeRel --clean-first
     - name: Test
       working-directory: ${{ runner.temp }}
       run: |
         $env:CTEST_ARGS="--log_level=all"
-        ctest -VV -C Debug
+        ctest -VV -C MinSizeRel
 
   windows-release:
     runs-on: windows-latest    
@@ -95,7 +95,7 @@ jobs:
         cd ${{ runner.temp }}\openssl\openssl-1.1.1i && nmake        
     - name: Install Dependencies
       run: |
-        $env:CXXFLAGS="/GL /D_WIN32_WINNT#0x0601 /DBOOST_THREAD_VERSION#3 /DBOOST_ALLOW_DEPRECATED_HEADERS /DBOOST_ASIO_NO_DEPRECATED"
+        $env:CXXFLAGS="/GL/D_WIN32_WINNT#0x0601 /DBOOST_THREAD_VERSION#3 /DBOOST_ALLOW_DEPRECATED_HEADERS /DBOOST_ASIO_NO_DEPRECATED"
         $env:LDFLAGS="/LTCG"
         $env:BOOST_ROOT=$env:BOOST_ROOT_1_72_0
         cmake -A x64 -S ${{ github.workspace }} -B ${{ runner.temp }} -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded -DMQTT_USE_STATIC_BOOST=ON -DMQTT_USE_ZLIB=OFF -DMQTT_USE_STATIC_OPENSSL=ON -DMQTT_USE_ZLIB=OFF -DMQTT_TEST_1=OFF  -DMQTT_TEST_2=OFF  -DMQTT_TEST_3=OFF -DMQTT_TEST_4=OFF -DMQTT_TEST_5=OFF -DMQTT_TEST_6=OFF -DMQTT_TEST_7=OFF -DMQTT_BUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=Release -DMQTT_USE_WS=ON -DMQTT_USE_TLS=ON -DMQTT_USE_STR_CHECK=OFF  -DMQTT_USE_LOG=ON  -DMQTT_STD_ANY=OFF -DMQTT_STD_OPTIONAL=OFF -DMQTT_STD_VARIANT=OFF -DMQTT_STD_STRING_VIEW=OFF -DMQTT_STD_SHARED_PTR_ARRAY=OFF -DOPENSSL_ROOT_DIR=${{ runner.temp }}/openssl/openssl-1.1.1i
