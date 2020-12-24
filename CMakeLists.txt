@@ -108,12 +108,9 @@ IF (MQTT_USE_STATIC_BOOST)
     MESSAGE (STATUS "Staticly linking with Boost")
     SET (Boost_USE_STATIC_LIBS TRUE)
 
-    IF (MSVC)
-        add_compile_options(
-            $<$<CONFIG:>:/MT> #---------|
-            $<$<CONFIG:Debug>:/MTd> #---|-- Statically link the runtime libraries
-            $<$<CONFIG:Release>:/MT> #--|
-        )
+    IF (MSVC AND CMAKE_BUILD_TYPE STREQUAL "Release")
+        # Static link the runtime
+        ADD_COMPILE_OPTIONS($<$<CONFIG:Release>:/MT>)
         SET (Boost_USE_STATIC_RUNTIME TRUE)
     ENDIF ()
 ELSE ()
