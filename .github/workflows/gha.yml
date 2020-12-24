@@ -67,12 +67,12 @@ jobs:
         cmake -A x64 -S ${{ github.workspace }} -B ${{ runner.temp }} ${{ matrix.pattern }}
     - name: Compile
       run: |
-        cmake --build ${{ runner.temp }} --parallel 1  --config Release --clean-first
+        cmake --build ${{ runner.temp }} --parallel 1  --config Debug --clean-first
     - name: Test
       working-directory: ${{ runner.temp }}
       run: |
         $env:CTEST_ARGS="--log_level=all"
-        ctest -VV -C Release
+        ctest -VV -C Debug
 
   windows-release:
     runs-on: windows-latest    
