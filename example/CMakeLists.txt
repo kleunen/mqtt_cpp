@@ -2,6 +2,7 @@ LIST (APPEND exec_PROGRAMS
     broker.cpp
     no_tls_client.cpp
     no_tls_async_client.cpp
+    no_tls_async_reconnect_client.cpp
     no_tls_server.cpp
     no_tls_both.cpp
     v5_no_tls_client.cpp
