@@ -50,6 +50,12 @@ FOREACH (source_file ${exec_PROGRAMS})
     GET_FILENAME_COMPONENT (source_file_we ${source_file} NAME_WE)
     ADD_EXECUTABLE (${source_file_we} ${source_file})
     TARGET_LINK_LIBRARIES (${source_file_we} mqtt_cpp_iface)
+
+    IF (MQTT_USE_PRECOMP)
+           TARGET_PRECOMPILE_HEADERS(${source_file_we} REUSE_FROM precomp_target)
+           TARGET_LINK_LIBRARIES (${source_file_we} precomp_target)
+    ENDIF ()
+
     IF (MQTT_USE_LOG)
         TARGET_COMPILE_DEFINITIONS (${source_file_we} PUBLIC $<IF:$<BOOL:${MQTT_USE_STATIC_BOOST}>,,BOOST_LOG_DYN_LINK>)
         TARGET_LINK_LIBRARIES (${source_file_we} Boost::log)
@@ -57,10 +63,6 @@ FOREACH (source_file ${exec_PROGRAMS})
     TARGET_COMPILE_DEFINITIONS (${source_file_we} PUBLIC $<IF:$<BOOL:${MQTT_USE_STATIC_BOOST}>,,BOOST_PROGRAM_OPTIONS_DYN_LINK>)
     TARGET_LINK_LIBRARIES (${source_file_we} Boost::program_options)
 
-    IF (MQTT_USE_PRECOMP)
-           TARGET_PRECOMPILE_HEADERS(${source_file_we} REUSE_FROM precomp_target)
-           TARGET_LINK_LIBRARIES (${source_file_we} precomp_target)
-    ENDIF ()
 ENDFOREACH ()
 
 FILE(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../example/broker.conf DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
