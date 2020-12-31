@@ -12,28 +12,28 @@
 
 namespace MQTT_NS {
 
-extern template class callable_overlay<async_client<tcp_endpoint<as::ip::tcp::socket, as::io_context::strand>>>;
-extern template class callable_overlay<async_client<tcp_endpoint<as::ip::tcp::socket, null_strand>>>;
+extern template struct callable_overlay<async_client<tcp_endpoint<as::ip::tcp::socket, as::io_context::strand>>>;
+extern template struct callable_overlay<async_client<tcp_endpoint<as::ip::tcp::socket, null_strand>>>;
 
 extern template class server<as::io_context::strand, std::mutex, std::lock_guard, 2>;
 
 #if defined(MQTT_USE_WS)
-extern template class callable_overlay<async_client<ws_endpoint<as::ip::tcp::socket, as::io_context::strand>>>;
-extern template class callable_overlay<async_client<ws_endpoint<as::ip::tcp::socket, null_strand>>>;
+extern template struct callable_overlay<async_client<ws_endpoint<as::ip::tcp::socket, as::io_context::strand>>>;
+extern template struct callable_overlay<async_client<ws_endpoint<as::ip::tcp::socket, null_strand>>>;
 
 extern template class server_ws<as::io_context::strand, std::mutex, std::lock_guard, 2>;
 
 #endif // defined(MQTT_USE_WS)
 
 #if defined(MQTT_USE_TLS)
-extern template class callable_overlay<async_client<tcp_endpoint<tls::stream<as::ip::tcp::socket>, as::io_context::strand>>>;
-extern template class callable_overlay<async_client<tcp_endpoint<tls::stream<as::ip::tcp::socket>, null_strand>>>;
+extern template struct callable_overlay<async_client<tcp_endpoint<tls::stream<as::ip::tcp::socket>, as::io_context::strand>>>;
+extern template struct callable_overlay<async_client<tcp_endpoint<tls::stream<as::ip::tcp::socket>, null_strand>>>;
 
 extern template class server_tls<as::io_context::strand, std::mutex, std::lock_guard, 2>;
 
 #if defined(MQTT_USE_WS)
-extern template class callable_overlay<async_client<ws_endpoint<tls::stream<as::ip::tcp::socket>, as::io_context::strand>>>;
-extern template class callable_overlay<async_client<ws_endpoint<tls::stream<as::ip::tcp::socket>, null_strand>>>;
+extern template struct callable_overlay<async_client<ws_endpoint<tls::stream<as::ip::tcp::socket>, as::io_context::strand>>>;
+extern template struct callable_overlay<async_client<ws_endpoint<tls::stream<as::ip::tcp::socket>, null_strand>>>;
 
 extern template class server_tls_ws<as::io_context::strand, std::mutex, std::lock_guard, 2>;
 
