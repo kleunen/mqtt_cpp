@@ -48,7 +48,6 @@ ENDIF ()
 
 IF (MQTT_USE_PRECOMP)
     add_library(example_precomp_target SHARED ${PROJECT_SOURCE_DIR}/helper/precomp.cpp)
-    target_precompile_headers(example_precomp_target PUBLIC ${PROJECT_SOURCE_DIR}/helper/precomp.hpp)
     TARGET_LINK_LIBRARIES (example_precomp_target mqtt_cpp_iface)
 
     IF (MQTT_USE_LOG)
@@ -66,7 +65,6 @@ FOREACH (source_file ${exec_PROGRAMS})
     TARGET_LINK_LIBRARIES (${source_file_we} mqtt_cpp_iface)
 
     IF (MQTT_USE_PRECOMP)
-           TARGET_PRECOMPILE_HEADERS(${source_file_we} REUSE_FROM example_precomp_target)
            TARGET_LINK_LIBRARIES (${source_file_we} example_precomp_target)
     ENDIF ()
 

@@ -16,7 +16,6 @@ OPTION(MQTT_TEST_7 "Build test part7" ON)
 
 IF (MQTT_USE_PRECOMP)
     add_library(test_precomp_target SHARED ${PROJECT_SOURCE_DIR}/helper/precomp.cpp)
-    target_precompile_headers(test_precomp_target PUBLIC ${PROJECT_SOURCE_DIR}/helper/precomp.hpp)
     TARGET_LINK_LIBRARIES (test_precomp_target mqtt_cpp_iface)
 
     TARGET_COMPILE_DEFINITIONS (test_precomp_target PUBLIC $<IF:$<BOOL:${MQTT_USE_STATIC_BOOST}>,,BOOST_TEST_DYN_LINK>)
