@@ -16,7 +16,6 @@ OPTION(MQTT_TEST_7 "Build test part7" ON)
 
 IF (MQTT_USE_PRECOMP)
     add_library(test_precomp_target SHARED ${PROJECT_SOURCE_DIR}/helper/precomp.cpp)
-    set_target_properties(test_precomp_target PROPERTIES CXX_VISIBILITY_PRESET hidden)
     target_precompile_headers(test_precomp_target PUBLIC ${PROJECT_SOURCE_DIR}/helper/precomp.hpp)
     TARGET_LINK_LIBRARIES (test_precomp_target mqtt_cpp_iface)
 
