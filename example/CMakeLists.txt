@@ -47,7 +47,8 @@ IF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 ENDIF ()
 
 IF (MQTT_USE_PRECOMP)
-    add_library(example_precomp_target ${PROJECT_SOURCE_DIR}/helper/precomp.cpp)
+    add_library(example_precomp_target SHARED ${PROJECT_SOURCE_DIR}/helper/precomp.cpp)
+    set_target_properties(example_precomp_target PROPERTIES CXX_VISIBILITY_PRESET hidden)
     target_precompile_headers(example_precomp_target PUBLIC ${PROJECT_SOURCE_DIR}/helper/precomp.hpp)
     TARGET_LINK_LIBRARIES (example_precomp_target mqtt_cpp_iface)
 
