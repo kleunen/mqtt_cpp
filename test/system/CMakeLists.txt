@@ -114,6 +114,7 @@ FOREACH (source_file ${check_PROGRAMS})
 
     IF (MQTT_USE_PRECOMP)
         TARGET_PRECOMPILE_HEADERS(${source_file_we} REUSE_FROM precomp_target)
+        TARGET_LINK_LIBRARIES (${source_file_we} precomp_target)
     ENDIF ()
 ENDFOREACH ()
 
