@@ -46,14 +46,26 @@ IF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
 ENDIF ()
 
+IF (MQTT_USE_PRECOMP)
+    add_library(example_precomp_target ${PROJECT_SOURCE_DIR}/helper/precomp.cpp)
+    target_precompile_headers(example_precomp_target PUBLIC ${PROJECT_SOURCE_DIR}/helper/precomp.hpp)
+    TARGET_LINK_LIBRARIES (example_precomp_target mqtt_cpp_iface)
+
+    IF (MQTT_USE_LOG)
+        TARGET_COMPILE_DEFINITIONS (example_precomp_target PUBLIC $<IF:$<BOOL:${MQTT_USE_STATIC_BOOST}>,,BOOST_LOG_DYN_LINK>)
+    ENDIF ()
+
+    TARGET_COMPILE_DEFINITIONS (example_precomp_target PUBLIC $<IF:$<BOOL:${MQTT_USE_STATIC_BOOST}>,,BOOST_PROGRAM_OPTIONS_DYN_LINK>)
+ENDIF ()
+
 FOREACH (source_file ${exec_PROGRAMS})
     GET_FILENAME_COMPONENT (source_file_we ${source_file} NAME_WE)
     ADD_EXECUTABLE (${source_file_we} ${source_file})
     TARGET_LINK_LIBRARIES (${source_file_we} mqtt_cpp_iface)
 
     IF (MQTT_USE_PRECOMP)
-           TARGET_PRECOMPILE_HEADERS(${source_file_we} REUSE_FROM precomp_target)
-           TARGET_LINK_LIBRARIES (${source_file_we} precomp_target)
+           TARGET_PRECOMPILE_HEADERS(${source_file_we} REUSE_FROM example_precomp_target)
+           TARGET_LINK_LIBRARIES (${source_file_we} example_precomp_target)
     ENDIF ()
 
     IF (MQTT_USE_LOG)

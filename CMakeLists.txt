@@ -144,18 +144,6 @@ IF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
 ENDIF ()
 
-IF (MQTT_USE_PRECOMP)
-    add_library(precomp_target helper/precomp.cpp)
-    target_precompile_headers(precomp_target PUBLIC ${PROJECT_SOURCE_DIR}/helper/precomp.hpp)
-    TARGET_LINK_LIBRARIES (precomp_target mqtt_cpp_iface)
-
-    IF (MQTT_USE_LOG)
-        TARGET_COMPILE_DEFINITIONS (precomp_target PUBLIC $<IF:$<BOOL:${MQTT_USE_STATIC_BOOST}>,,BOOST_LOG_DYN_LINK>)
-    ENDIF ()
-
-    TARGET_COMPILE_DEFINITIONS (precomp_target PUBLIC $<IF:$<BOOL:${MQTT_USE_STATIC_BOOST}>,,BOOST_PROGRAM_OPTIONS_DYN_LINK>)
-ENDIF ()
-
 IF (MQTT_BUILD_TESTS)
     MESSAGE(STATUS "Tests enabled")
     ENABLE_TESTING ()
