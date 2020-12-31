@@ -25,3 +25,5 @@
 #include <mqtt/variant.hpp>
 #include <mqtt/visitor_util.hpp>
 #include <mqtt/will.hpp>
+
+#include <../helper/precomp.hpp>
