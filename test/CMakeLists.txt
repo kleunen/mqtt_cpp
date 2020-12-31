@@ -4,6 +4,8 @@
 # (See accompanying file LICENSE_1_0.txt or copy at
 # http://www.boost.org/LICENSE_1_0.txt)
 
+FIND_PACKAGE (Boost 1.67.0 REQUIRED COMPONENTS unit_test_framework)
+
 OPTION(MQTT_TEST_1 "Build test part1" ON)
 OPTION(MQTT_TEST_2 "Build test part2" ON)
 OPTION(MQTT_TEST_3 "Build test part3" ON)
@@ -18,10 +20,33 @@ IF (MQTT_USE_PRECOMP)
     TARGET_LINK_LIBRARIES (test_precomp_target mqtt_cpp_iface)
 
     TARGET_COMPILE_DEFINITIONS (test_precomp_target PUBLIC $<IF:$<BOOL:${MQTT_USE_STATIC_BOOST}>,,BOOST_TEST_DYN_LINK>)
+    TARGET_LINK_LIBRARIES (
+        test_precomp_target mqtt_cpp_iface Boost::unit_test_framework
+    )
 
     IF (MQTT_USE_LOG)
         TARGET_COMPILE_DEFINITIONS (test_precomp_target PUBLIC $<IF:$<BOOL:${MQTT_USE_STATIC_BOOST}>,,BOOST_LOG_DYN_LINK>)
+        TARGET_LINK_LIBRARIES (
+            test_precomp_target Boost::log
+        )
     ENDIF ()
+
+    IF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+        IF (MQTT_CODECOV)
+            SET_PROPERTY (TARGET test_precomp_target
+                          APPEND_STRING PROPERTY COMPILE_FLAGS " -O0 -g --coverage -fno-inline")
+            SET_PROPERTY (TARGET test_precomp_target
+                          APPEND_STRING PROPERTY LINK_FLAGS " --coverage")
+        ENDIF ()
+    ENDIF ()
+    IF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+        IF (CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
+            STRING(REGEX REPLACE "/W[0-4]" "/W3" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+        ELSE ()
+            SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3")
+        ENDIF ()
+    ENDIF ()
+
 ENDIF ()
 
 ADD_SUBDIRECTORY (system)
