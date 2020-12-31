@@ -144,8 +144,6 @@ IF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
 ENDIF ()
 
-SET(CMAKE_CXX_VISIBILITY_PRESET hidden)
-
 IF (MQTT_USE_PRECOMP)
     add_library(precomp_target SHARED ${PROJECT_SOURCE_DIR}/helper/precomp.cpp)
     TARGET_LINK_LIBRARIES (precomp_target mqtt_cpp_iface)
