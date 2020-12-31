@@ -24,9 +24,6 @@ OPTION(MQTT_STD_ANY "Use std::any from C++17 instead of boost::any" OFF)
 OPTION(MQTT_STD_SHARED_PTR_ARRAY "Use std::shared_ptr<char[]> from C++17 instead of boost::shared_ptr<char[]>" OFF)
 OPTION(MQTT_DISABLE_LIBSTDCXX_TUPLE_ANY_WORKAROUND "std::tuple<std::any> workaround for libstdc++" OFF)
 
-SET(CMAKE_POSITION_INDEPENDENT_CODE ON)
-SET(CMAKE_CXX_VISIBILITY_PRESET hidden)
-
 IF (POLICY CMP0074)
   CMAKE_POLICY(SET CMP0074 NEW)
 ENDIF ()
@@ -145,6 +142,21 @@ ADD_SUBDIRECTORY (include)
 # Without this setting added, azure pipelines completely fails to find the boost libraries. No idea why.
 IF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
+ENDIF ()
+
+SET(CMAKE_CXX_VISIBILITY_PRESET hidden)
+
+IF (MQTT_USE_PRECOMP)
+    add_library(precomp_target SHARED ${PROJECT_SOURCE_DIR}/helper/precomp.cpp)
+    TARGET_LINK_LIBRARIES (precomp_target mqtt_cpp_iface)
+
+    IF (MQTT_USE_LOG)
+        TARGET_COMPILE_DEFINITIONS (precomp_target PUBLIC $<IF:$<BOOL:${MQTT_USE_STATIC_BOOST}>,,BOOST_LOG_DYN_LINK>)
+        TARGET_LINK_LIBRARIES (precomp_target Boost::log)
+    ENDIF ()
+
+    TARGET_COMPILE_DEFINITIONS (precomp_target PUBLIC $<IF:$<BOOL:${MQTT_USE_STATIC_BOOST}>,,BOOST_PROGRAM_OPTIONS_DYN_LINK>)
+    TARGET_LINK_LIBRARIES (precomp_target Boost::program_options)
 ENDIF ()
 
 IF (MQTT_BUILD_TESTS)

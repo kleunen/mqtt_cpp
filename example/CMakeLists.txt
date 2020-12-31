@@ -46,35 +46,22 @@ IF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
 ENDIF ()
 
-IF (MQTT_USE_PRECOMP)
-    add_library(example_precomp_target SHARED ${PROJECT_SOURCE_DIR}/helper/precomp.cpp)
-    TARGET_LINK_LIBRARIES (example_precomp_target mqtt_cpp_iface)
-
-    IF (MQTT_USE_LOG)
-        TARGET_COMPILE_DEFINITIONS (example_precomp_target PUBLIC $<IF:$<BOOL:${MQTT_USE_STATIC_BOOST}>,,BOOST_LOG_DYN_LINK>)
-        TARGET_LINK_LIBRARIES (example_precomp_target Boost::log)
-    ENDIF ()
-
-    TARGET_COMPILE_DEFINITIONS (example_precomp_target PUBLIC $<IF:$<BOOL:${MQTT_USE_STATIC_BOOST}>,,BOOST_PROGRAM_OPTIONS_DYN_LINK>)
-    TARGET_LINK_LIBRARIES (example_precomp_target Boost::program_options)
-ENDIF ()
-
 FOREACH (source_file ${exec_PROGRAMS})
     GET_FILENAME_COMPONENT (source_file_we ${source_file} NAME_WE)
     ADD_EXECUTABLE (${source_file_we} ${source_file})
     TARGET_LINK_LIBRARIES (${source_file_we} mqtt_cpp_iface)
 
     IF (MQTT_USE_PRECOMP)
-           TARGET_LINK_LIBRARIES (${source_file_we} example_precomp_target)
+           TARGET_LINK_LIBRARIES (${source_file_we} precomp_target)
     ENDIF ()
 
     IF (MQTT_USE_LOG)
         TARGET_COMPILE_DEFINITIONS (${source_file_we} PUBLIC $<IF:$<BOOL:${MQTT_USE_STATIC_BOOST}>,,BOOST_LOG_DYN_LINK>)
         TARGET_LINK_LIBRARIES (${source_file_we} Boost::log)
     ENDIF ()
+
     TARGET_COMPILE_DEFINITIONS (${source_file_we} PUBLIC $<IF:$<BOOL:${MQTT_USE_STATIC_BOOST}>,,BOOST_PROGRAM_OPTIONS_DYN_LINK>)
     TARGET_LINK_LIBRARIES (${source_file_we} Boost::program_options)
-
 ENDFOREACH ()
 
 FILE(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../example/broker.conf DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

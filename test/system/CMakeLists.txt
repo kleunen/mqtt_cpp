@@ -78,7 +78,7 @@ FOREACH (source_file ${check_PROGRAMS})
     TARGET_COMPILE_DEFINITIONS (${source_file_we} PUBLIC $<IF:$<BOOL:${MQTT_USE_STATIC_BOOST}>,,BOOST_TEST_DYN_LINK>)
 
     IF (MQTT_USE_PRECOMP)
-        TARGET_LINK_LIBRARIES (${source_file_we} test_precomp_target)
+        TARGET_LINK_LIBRARIES (${source_file_we} precomp_target)
     ENDIF ()
 
     TARGET_LINK_LIBRARIES (
