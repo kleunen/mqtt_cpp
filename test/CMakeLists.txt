@@ -32,6 +32,9 @@ IF (MQTT_USE_PRECOMP)
     ENDIF ()
 
     IF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+        SET_PROPERTY (TARGET test_precomp_target
+                  APPEND_STRING PROPERTY COMPILE_FLAGS " -fPIC")
+
         IF (MQTT_CODECOV)
             SET_PROPERTY (TARGET test_precomp_target
                           APPEND_STRING PROPERTY COMPILE_FLAGS " -O0 -g --coverage -fno-inline")
