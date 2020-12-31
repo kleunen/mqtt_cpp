@@ -53,9 +53,11 @@ IF (MQTT_USE_PRECOMP)
 
     IF (MQTT_USE_LOG)
         TARGET_COMPILE_DEFINITIONS (example_precomp_target PUBLIC $<IF:$<BOOL:${MQTT_USE_STATIC_BOOST}>,,BOOST_LOG_DYN_LINK>)
+        TARGET_LINK_LIBRARIES (example_precomp_target Boost::log)
     ENDIF ()
 
     TARGET_COMPILE_DEFINITIONS (example_precomp_target PUBLIC $<IF:$<BOOL:${MQTT_USE_STATIC_BOOST}>,,BOOST_PROGRAM_OPTIONS_DYN_LINK>)
+    TARGET_LINK_LIBRARIES (example_precomp_target Boost::program_options)
 ENDIF ()
 
 FOREACH (source_file ${exec_PROGRAMS})
