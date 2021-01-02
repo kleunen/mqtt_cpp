@@ -35,38 +35,9 @@ ENDIF ()
 FOREACH (source_file ${check_PROGRAMS})
     GET_FILENAME_COMPONENT (source_file_we ${source_file} NAME_WE)
     ADD_EXECUTABLE (${source_file_we} ${source_file})
-    TARGET_COMPILE_DEFINITIONS (${source_file_we} PUBLIC $<IF:$<BOOL:${MQTT_USE_STATIC_BOOST}>,,BOOST_TEST_DYN_LINK>)
-    TARGET_LINK_LIBRARIES (
-        ${source_file_we} mqtt_cpp_iface Boost::unit_test_framework
-    )
-    IF (MQTT_USE_LOG)
-        TARGET_COMPILE_DEFINITIONS (${source_file_we} PUBLIC $<IF:$<BOOL:${MQTT_USE_STATIC_BOOST}>,,BOOST_LOG_DYN_LINK>)
-        TARGET_LINK_LIBRARIES (
-            ${source_file_we} Boost::log
-        )
-    ENDIF ()
-    IF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-        IF (MQTT_CODECOV)
-            SET_PROPERTY (TARGET ${source_file_we}
-                          APPEND_STRING PROPERTY COMPILE_FLAGS " -O0 -g --coverage -fno-inline")
-            SET_PROPERTY (TARGET ${source_file_we}
-                          APPEND_STRING PROPERTY LINK_FLAGS " --coverage")
-        ENDIF ()
-    ENDIF ()
-    IF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-        IF (CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
-            STRING(REGEX REPLACE "/W[0-4]" "/W3" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-        ELSE ()
-            SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3")
-        ENDIF ()
-    ENDIF ()
+    mqttcpp_test_properties(${source_file_we})
 
-    # Running test with arguments
-    # CTEST_ARGS="--log_level=all" ctest -V
-    IF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-        ADD_TEST (NAME ${source_file_we} COMMAND ${CMAKE_CURRENT_BINARY_DIR}/${source_file_we})
-    ELSE ()
-        ADD_TEST (NAME ${source_file_we} COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/../args_provider.sh ${CMAKE_CURRENT_BINARY_DIR}/${source_file_we})
+    IF (MQTT_USE_PRECOMP)
+        TARGET_PRECOMPILE_HEADERS(${source_file_we} REUSE_FROM test_precomp_target)
     ENDIF ()
-    set_tests_properties(${source_file_we} PROPERTIES TIMEOUT 300)
 ENDFOREACH ()
